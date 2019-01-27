@@ -1,14 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Jan 20 09:28:21 2019
-
-@author: Engineering
-"""
-
 from sympy import *
 from time import time
 from mpmath import radians
-import numpy as np
 import tf
 
 '''
@@ -37,6 +29,7 @@ test_cases = {1:[[[2.16135,-1.42635,1.55109],
 def test_code(test_case):
     ## Set up code
     ## Do not modify!
+    x = 0
     class Position:
         def __init__(self,EE_pos):
             self.x = EE_pos[0]
@@ -70,68 +63,13 @@ def test_code(test_case):
     ## 
 
     ## Insert IK code here!
-    px = Position.x
-    py = Position.y
-    pz = Position.z
-
-
-	#Rotation matrices for EE
-    R_corr = Matrix([
-    [                  1.0,                     0,                     0, 0],
-    [                    0,                  -1.0,                     0, 0],
-    [                    0,                     0,                  -1.0, 0],
-    [                    0,                     0,                     0, 1]])
     
-    (roll, pitch, yaw) = tf.transformations.euler_from_quaternion(
-                [Orientation.x, Orientation.y,
-                    Orientation.z, Orientation.w])
-    R_x = Matrix([[ 1,          0,          0],
-      			[   0,  cos(roll), -sin(roll)],
-      			[   0,  sin(roll),  cos(roll)]])
-    R_y = Matrix([[ cos(pitch),        0,  sin(pitch)],
-      			[            0,        1,           0],
-      			[  -sin(pitch),        0,  cos(pitch)]])
-    R_z = Matrix([[ cos(yaw), -sin(yaw),        0],
-      			[   sin(yaw),  cos(yaw),        0],
-      			[           0,          0,        1]])
-      			
-    Rrpy = R_z * R_y * R_z * R_corr
-
-	#get WC from EE pos & rot
-    n_x = Rrpy[0,2]
-    n_y = Rrpy[1,2]
-    n_z = Rrpy[2,2]
-	# Compensate for rotation discrepancy between DH parameters and Gazebo
-    wx = px - (.303)*n_x
-    wy = py - (.303)*n_y
-    wz = pz - (.303)*n_z
-
-
-	# joint angles to WC
-    a2 = 1.25
-    d4 = 1.5
-
-    theta1 = atan2(wy, wx)
-#	theta2/3 - law of cosines
-    wxy2 = sqrt(wx**2 + wy**2) # ||vector to x, y ||
-    B2 = (wxy2 - 0.35)**2 + (wz - .75)**2 #B squared
-
-    thet_b = acos((a2**2 +d4**2 - B2)/(a2*d4))
-    theta3 = np.pi/2 - thet_b
-	
-    thet_a = acos((a2**2 + B2 - d4**2)/(2*d4*sqrt(B2)))
-    thet_2pa = atan2(wxy/wz)
-    theta2 = thet_2pa - thet_a
-
-	#joint anlges of Wrist to EE
-    R0_3ev = Matrix([[sin(theta2 + theta3)*cos(theta1), cos(theta1)*cos(theta2 + theta3), -sin(theta1)],
-					[sin(theta1)*sin(theta2 + theta3), sin(theta1)*cos(theta2 + theta3),  cos(theta1)],
-					[        cos(theta2 + theta3),        -sin(theta2 + theta3),        0]])
-    R3_6 = R0_3ev.inv("LU") * Rrpy
-	
-    theta5 = acos(R3_6[1,2])
-    theta6 = acos(R3_6[1,0]/sin(theta5))
-    theta4 = -acos(R3_6[0,2]/sin(theta5))
+    theta1 = 0
+    theta2 = 0
+    theta3 = 0
+    theta4 = 0
+    theta5 = 0
+    theta6 = 0
 
     ## 
     ########################################################################################
